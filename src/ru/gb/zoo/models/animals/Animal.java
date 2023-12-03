@@ -20,6 +20,12 @@ public abstract class Animal {
     }
 
     public Boolean addCommand(String command) {
-        
+		command = command.trim().toLowerCase();
+        if (commands.contains(command))
+			return false;
+		else {
+			commands.add(command);
+			return true;
+		}
     }
 }
