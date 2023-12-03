@@ -7,6 +7,10 @@ public class Commands extends ArrayList<String> {
     public Commands() {
         ArrayList<String> commands = new ArrayList<String>();
     };
+	
+	public void print() {
+		
+	}
 
     @Override
     public String toString() {
