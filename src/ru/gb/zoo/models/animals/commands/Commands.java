@@ -7,10 +7,6 @@ public class Commands extends ArrayList<String> {
     public Commands() {
         ArrayList<String> commands = new ArrayList<String>();
     };
-	
-	public void print() {
-		
-	}
 
     @Override
     public String toString() {
@@ -19,7 +15,7 @@ public class Commands extends ArrayList<String> {
             if (i == this.size() - 1)
                 sb.append(this.get(i));
             else
-                sb.append(this.get(i)).append(",\n");
+                sb.append(this.get(i)).append(", ");
         }
         return sb.toString();
     }
