@@ -14,3 +14,12 @@
 - в класс DBConnection добавлен конструктор, принимающий объект класса DBConfig
 - создан класс DBWriter
 - создан класс DBReader
+
+08.12.2023:
+- добавлен метод read в класс DBReader
+- добавлен метод write в класс DBWriter
+- удалены классы Pet, PackAnimal
+- добавлен конструктор Commands(String commandLine) в класс Commands
+- добавлены методы get(), add(), remove() в класс Commands
+- обновлен абстрактный класс Animal
+- добавлены классы животных: Camel, Cat, Dog, Donkey, Hamster, Horse
