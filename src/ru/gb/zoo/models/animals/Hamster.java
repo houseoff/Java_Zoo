@@ -1,20 +1,14 @@
 package ru.gb.zoo.models.animals;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.HashMap;
 
 public class Hamster extends Animal {
 
+    public Hamster(String type_name, String group_name, String name, String birthday, String commands) {
+        super(type_name, group_name, name, birthday, commands);
+    }
+
     public Hamster(HashMap<String, String> properties) {
         super(properties);
-    }
-
-    public Hamster(Connection connection, String query) throws SQLException {
-        super(connection, query);
-    }
-
-    public Hamster(Connection connection, int id) throws SQLException {
-        super(connection, String.format("select * from sp_get_animal('hamsters', %d)", id));
     }
 }

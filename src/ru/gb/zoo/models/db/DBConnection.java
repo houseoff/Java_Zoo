@@ -16,7 +16,7 @@ public class DBConnection {
         connection = DriverManager.getConnection(dbConfig.getUrl(), dbConfig.getUser(), dbConfig.getPassword());
     }
 
-    public Connection getConnection() {
+    public Connection get() {
         return connection;
     }
 }
