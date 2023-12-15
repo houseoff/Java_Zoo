@@ -2,8 +2,9 @@ package ru.gb.zoo.models.animals;
 
 import ru.gb.zoo.models.animals.commands.Commands;
 import java.util.HashMap;
+import java.util.Objects;
 
-public abstract class Animal {
+public class Animal {
     protected int id;
     protected String type_name;
     protected String group_name;
@@ -11,16 +12,9 @@ public abstract class Animal {
     protected String birthday;
     protected Commands commands;
 
-    public Animal(String type_name, String group_name, String name, String birthday, String commands) {
-        this.type_name = type_name;
-        this.group_name = group_name;
-        this.name = name;
-        this.birthday = birthday;
-        this.commands = new Commands(commands);
-    };
-
     public Animal(HashMap<String, String> properties) {
-        this.id = Integer.parseInt(properties.get("id"));
+        if (properties.containsKey("id") && !Objects.equals(properties.get("id"), ""))
+            this.id = Integer.parseInt(properties.get("id"));
         this.type_name = properties.get("type_name");
         this.group_name = properties.get("group_name");
         this.name = properties.get("name");
@@ -50,6 +44,14 @@ public abstract class Animal {
 
     public String getCommands() {
         return commands.toString();
+    }
+
+    public void setProperties(HashMap<String, String> properties) {
+        this.type_name = properties.get("type_name");
+        this.group_name = properties.get("group_name");
+        this.name = properties.get("name");
+        this.birthday = properties.get("birthday");
+        commands = new Commands(properties.get("commands"));
     }
 
     public void setType(String type) {

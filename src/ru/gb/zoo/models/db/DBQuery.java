@@ -13,7 +13,7 @@ public class DBQuery {
         this.dbConnection = dbConnection;
     };
 
-    // Функция для получения ID записи по заданному типу из таблицы animal_groups
+    // Функция для получения ID записи по заданной группе из таблицы animal_groups
     private int getIdFromAnimalGroups(String groupName) throws SQLException {
         try (Statement statement = dbConnection.get().createStatement()) {
             ResultSet resultSet = statement.executeQuery(
@@ -46,45 +46,20 @@ public class DBQuery {
         }
     };
 
-    // Функция для получения записи по заданному типу из таблицы animal_groups по ID
-    private String getGroupFromAnimalGroups(int id) throws SQLException {
-        try (Statement statement = dbConnection.get().createStatement()) {
-            ResultSet resultSet = statement.executeQuery(
-                    String.format("select * from sp_get_group_from_animal_groups('%d')", id)
-            );
-            resultSet.next();
-            return resultSet.getString("sp_get_group_from_animal_groups");
-        }
-    };
-
-    // Функция для получения записи по заданному типу из таблицы animal_types по ID
-    private String getTypeFromAnimalTypes(int id) throws SQLException {
-        try (Statement statement = dbConnection.get().createStatement()) {
-            ResultSet resultSet = statement.executeQuery(
-                    String.format("select * from sp_get_type_from_animal_types('%d')", id)
-            );
-            resultSet.next();
-            return resultSet.getString("sp_get_type_from_animal_types");
-        }
-    };
-
-    // Функция для получения имени таблицы по виду животного
-    private String getTableNameByType(String type) throws SQLException {
-        try (Statement statement = dbConnection.get().createStatement()) {
-            ResultSet resultSet = statement.executeQuery(
-                    String.format("select * from sp_get_table('%s')", type)
-            );
-            resultSet.next();
-            return resultSet.getString("sp_get_table");
-        }
-    };
-
     private HashMap<String, String> newHashMap(String keys) {
         HashMap<String, String> data = new HashMap<>();
         for (String key : keys.split(",")) {
             data.put(key.toLowerCase().trim(), "");
         }
         return data;
+    };
+
+    public void deleteAnimal(Animal animal) throws SQLException {
+        String table = this.getTableNameByType(animal.getType());
+        String sql = String.format("delete from %s where id = %d;", table, animal.getId());
+        try (Statement statement = dbConnection.get().createStatement()) {
+            statement.executeUpdate(sql);
+        }
     };
 
     public String getAnimalTypes() throws SQLException {
@@ -165,6 +140,27 @@ public class DBQuery {
         }
     };
 
+    // Функция для получения имени таблицы по виду животного
+    public String getTableNameByType(String type) throws SQLException {
+        try (Statement statement = dbConnection.get().createStatement()) {
+            ResultSet resultSet = statement.executeQuery(
+                    String.format("select * from sp_get_table('%s')", type)
+            );
+            resultSet.next();
+            return resultSet.getString("sp_get_table");
+        }
+    };
+
+    public boolean ifExistsAnimal(int id, String type) throws SQLException {
+        try (Statement statement = dbConnection.get().createStatement()) {
+            String table = this.getTableNameByType(type);
+            ResultSet resultSet = statement.executeQuery(
+                    String.format("select * from sp_if_exists_animal('%s', %d)", table, id));
+            resultSet.next();
+            return resultSet.getBoolean("sp_if_exists_animal");
+        }
+    }
+
     public void insertAnimal(Animal animal) throws SQLException {
         String table = this.getTableNameByType(animal.getType());
         String sql = "insert into " + table + " (type_id, group_id, name, birthday, commands) values (?, ?, ?, ?, ?);";
@@ -181,23 +177,24 @@ public class DBQuery {
     public void updateAnimal(Animal animal, String field, String newValue) throws SQLException {
         String table = this.getTableNameByType(animal.getType());
         if (field.equals("type_name")) {
-            this.dropAnimal(animal);
+            this.deleteAnimal(animal);
             animal.setType(newValue);
             animal.setGroup(this.getGroupByType(animal.getType()));
             this.insertAnimal(animal);
+        } else if (field.equals("group_name")) {
+            animal.setGroup(newValue);
+            int newId = this.getIdFromAnimalGroups(newValue);
+            String sql = String.format("update %s set group_id = %d where id = %d;", table, newId, animal.getId());
+            try (Statement statement = dbConnection.get().createStatement()) {
+                statement.executeUpdate(sql);
+            }
         } else {
-            String sql = String.format("update %s set %s = '%s' where id = %d;", table, field, newValue, animal.getId());
+            String sql = String.format("update %s set %s = '%s' where id = %d;",
+                    table, field, newValue, animal.getId());
             try (Statement statement = dbConnection.get().createStatement()) {
                 statement.executeUpdate(sql);
             }
         }
     };
-
-    public void dropAnimal(Animal animal) throws SQLException {
-        String table = this.getTableNameByType(animal.getType());
-        String sql = String.format("delete from %s where id = %d;", table, animal.getId());
-        try (Statement statement = dbConnection.get().createStatement()) {
-            statement.executeUpdate(sql);
-        }
-    };
 }
+
