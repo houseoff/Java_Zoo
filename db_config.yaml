@@ -1,0 +1,6 @@
+type: postgresql
+server:
+port:
+database:
+user:
+password:

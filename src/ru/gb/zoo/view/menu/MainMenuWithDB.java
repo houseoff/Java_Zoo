@@ -7,7 +7,7 @@ public class MainMenuWithDB extends Menu {
 
     public MainMenuWithDB(UserConsoleUI consoleUI) {
         super(consoleUI);
-        commandList.add(new GetAllAnimals(consoleUI));
+        commandList.add(new ShowAllAnimals(consoleUI));
         commandList.add(new AddAnimal(consoleUI));
         commandList.add(new OptionsAnimal(consoleUI));
         commandList.add(new DeleteAnimal(consoleUI));

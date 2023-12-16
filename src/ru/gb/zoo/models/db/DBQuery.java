@@ -96,12 +96,12 @@ public class DBQuery {
         }
     }
 
-    public String getAllAnimals() {
+    public String getAllAnimals(String sort) {
         try (Statement statement = dbConnection.get().createStatement(
                 ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY
         )) {
             StringBuilder sb = new StringBuilder();
-            ResultSet resultSet = statement.executeQuery("select * from sp_get_all_animals()");
+            ResultSet resultSet = statement.executeQuery("select * from sp_get_all_animals('" + sort + "')");
             resultSet.last();
             int countRows = resultSet.getRow();
             resultSet.beforeFirst();
@@ -161,7 +161,7 @@ public class DBQuery {
         }
     }
 
-    public void insertAnimal(Animal animal) throws SQLException {
+    public void insertAnimal(Animal animal) throws SQLException, IllegalArgumentException {
         String table = this.getTableNameByType(animal.getType());
         String sql = "insert into " + table + " (type_id, group_id, name, birthday, commands) values (?, ?, ?, ?, ?);";
         try (PreparedStatement statement = dbConnection.get().prepareStatement(sql)) {
@@ -169,7 +169,7 @@ public class DBQuery {
             statement.setInt(2, this.getIdFromAnimalGroups(animal.getGroup()));
             statement.setString(3, animal.getName());
             statement.setDate(4, Date.valueOf(animal.getBirthday()));
-            statement.setString(5, animal.getCommands());
+            statement.setString(5, animal.getStringCommands());
             statement.executeUpdate();
         }
     };

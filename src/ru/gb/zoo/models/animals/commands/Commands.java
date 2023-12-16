@@ -1,7 +1,6 @@
 package ru.gb.zoo.models.animals.commands;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,6 +30,10 @@ public class Commands {
     public void remove(String command) {
         commands.removeAll(Collections.singleton(command));
     };
+
+    public boolean contains(String command) {
+        return commands.contains(command);
+    }
 
     @Override
     public String toString() {

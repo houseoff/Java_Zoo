@@ -42,16 +42,12 @@ public class Animal {
         return birthday;
     }
 
-    public String getCommands() {
+    public String getStringCommands() {
         return commands.toString();
     }
 
-    public void setProperties(HashMap<String, String> properties) {
-        this.type_name = properties.get("type_name");
-        this.group_name = properties.get("group_name");
-        this.name = properties.get("name");
-        this.birthday = properties.get("birthday");
-        commands = new Commands(properties.get("commands"));
+    public Commands getCommands() {
+        return commands;
     }
 
     public void setType(String type) {
@@ -60,6 +56,10 @@ public class Animal {
 
     public void setGroup(String group) {
         this.group_name = group;
+    }
+
+    public void setCommands(Commands commands) {
+        this.commands = commands;
     }
 
     public void setName(String name) {

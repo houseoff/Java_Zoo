@@ -58,6 +58,8 @@ public class UserPresenter extends Presenter {
             view().print("Данные успешно записаны");
         } catch (SQLException e) {
             view().print("Произошла ошибка при выполнении запроса: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            view().print("Ошибка преобразования даты. Пожалуйста, введите корректную дату");
         }
     }
 
@@ -68,10 +70,6 @@ public class UserPresenter extends Presenter {
             view().print("Произошла ошибка при выполнении запроса: " + e.getMessage());
             return false;
         }
-    }
-
-    public void getAllAnimals() {
-        view().print(query.getAllAnimals());
     }
 
     public boolean isEmptyQuery() {
@@ -105,12 +103,32 @@ public class UserPresenter extends Presenter {
         }
     }
 
-    public void addAnimalCommand() {
-        // todo
+    public void addAnimalCommand(int id, String type, String command) {
+        try {
+            Animal animal = this.getAnimal(id, type);
+            if (animal.addCommand(command)) {
+                query.updateAnimal(animal, "commands", animal.getCommands().toString());
+                view().print("Команда добавлена успешно");
+            } else {
+                view().print("Команда \"" + command + "\" уже существует в списке команд животного");
+            }
+        } catch (SQLException e) {
+            view().print("Произошла ошибка при выполнении запроса: " + e.getMessage());
+        }
     }
 
-    public void deleteAnimalCommand() {
-        // todo
+    public void deleteAnimalCommand(int id, String type, String command) {
+        try {
+            Animal animal = this.getAnimal(id, type);
+            if (animal.removeCommand(command)) {
+                query.updateAnimal(animal, "commands", animal.getCommands().toString());
+                view().print("Команда удалена успешно");
+            } else {
+                view().print("Команда \"" + command + "\" не найдена в списке команд животного");
+            }
+        } catch (SQLException e) {
+            view().print("Произошла ошибка при выполнении запроса: " + e.getMessage());
+        }
     }
 
     public void editAnimalName(int id, String type, String newName) {
@@ -129,9 +147,17 @@ public class UserPresenter extends Presenter {
         this.editAnimalProperties(id, type, "birthday", newBirthday);
     }
 
+    public void showAllAnimalsByBirthday() {
+        view().print(query.getAllAnimals("birthday desc"));
+    }
+
+    public void showAllAnimalsByTypeName() {
+        view().print(query.getAllAnimals("type_name"));
+    }
+
     public void showAnimalCommands(int id, String type) {
         try {
-            view().print("Выполняемые команды: " + getAnimal(id, type).getCommands());
+            view().print("Выполняемые команды: " + getAnimal(id, type).getStringCommands());
         } catch (SQLException e) {
             view().print("Произошла ошибка при выполнении запроса: " + e.getMessage());
         }

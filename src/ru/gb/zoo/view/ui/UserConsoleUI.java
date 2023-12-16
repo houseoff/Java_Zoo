@@ -74,37 +74,33 @@ public class UserConsoleUI extends ConsoleUI {
 
     public void getConfigFromYAMLFile() {
         clearConsole();
-        String filename = input.getString(
-                "Введите имя YAML-файла",
-                ".*",
-                "Ошибка ввода");
+        String filename = input.getString("Введите имя YAML-файла");
         userPresenter.getConfigFromYAMLReader(filename);
     }
 
     public void addAnimal() {
         HashMap<String, String> data = new HashMap<>();
-        data.put("name", input.getString(
-                "Введите имя животного",
-                ".*",
-                "Пожалуйста, введите имя животного"));
+        data.put("name", input.getString("Введите имя животного"));
         data.put("type_name", input.getString(
-                String.format("Введите вид животного (доступные для ввода типы: %s)", userPresenter.getAllTypes())));
+                String.format("Введите вид животного (доступные для ввода виды: %s)", userPresenter.getAllTypes()),
+                userPresenter.getAllTypes(),
+                "Пожалуйста, введите вид из вышеуказанных",
+                false,
+                true
+        ));
         data.put("group_name", input.getString(
-                String.format("Введите группу животного (доступные для ввода типы: %s)",
-                        userPresenter.getAllGroups())));
+                String.format("Введите группу животного (доступные для ввода группы: %s)", userPresenter.getAllGroups()),
+                userPresenter.getAllGroups(),
+                "Пожалуйста, введите группу из вышеуказанных",
+                false,
+                true));
         data.put("birthday", input.getString(
                 "Введите дату рождения в формате ГГГГ-ММ-ДД",
                 "^\\d{4}-\\d{2}-\\d{2}$",
                 "Пожалуйста, введите дату в вышеуказанном формате"));
         data.put("commands", input.getString(
-                "Введите команды, которые умеет выполнять животное, через запятую",
-                ".*",
-                "Пожалуйста, введите команды"));
+                "Введите команды, которые умеет выполнять животное, через запятую"));
         userPresenter.addAnimal(data);
-    }
-
-    public void getAllAnimals() {
-        userPresenter.getAllAnimals();
     }
 
     public void deleteAnimal() {
@@ -113,17 +109,25 @@ public class UserConsoleUI extends ConsoleUI {
                 "^[0-9]|[1-9](\\d+)?$",
                 "Ошибка ввода. Введите положительное число");
         cachedType = input.getString(
-                String.format("Введите вид животного (доступные для ввода типы: %s)", userPresenter.getAllTypes()));
-        if (userPresenter.isExistsAnimal(cachedId, cachedType)) userPresenter.deleteAnimal(cachedId, cachedType);
+                String.format("Введите вид животного (доступные для ввода виды: %s)", userPresenter.getAllTypes()),
+                userPresenter.getAllTypes(),
+                "Пожалуйста, введите вид из вышеуказанных",
+                false,
+                true
+        );
+        if (userPresenter.isExistsAnimal(cachedId, cachedType))
+            userPresenter.deleteAnimal(cachedId, cachedType);
         else print("Не найдено ни одной записи о данном животном");
     }
 
     public void addAnimalCommand() {
-        userPresenter.addAnimalCommand();
+        String command = input.getString("Введите команду, которую необходимо добавить");
+        userPresenter.addAnimalCommand(cachedId, cachedType, command);
     }
 
     public void deleteAnimalCommand() {
-        userPresenter.deleteAnimalCommand();
+        String command = input.getString("Введите команду, которую необходимо удалить");
+        userPresenter.deleteAnimalCommand(cachedId, cachedType, command);
     }
 
     public void editAnimalName() {
@@ -132,20 +136,29 @@ public class UserConsoleUI extends ConsoleUI {
 
     public void editAnimalType() {
         userPresenter.editAnimalType(cachedId, cachedType, input.getString(
-                String.format("Введите вид животного (доступные для ввода типы: %s)", userPresenter.getAllTypes())));
+                String.format("Введите вид животного (доступные для ввода виды: %s)", userPresenter.getAllTypes()),
+                userPresenter.getAllTypes(),
+                "Пожалуйста, введите вид из вышеуказанных",
+                false,
+                true
+        ));
     }
 
     public void editAnimalGroup() {
         userPresenter.editAnimalGroup(cachedId, cachedType, input.getString(
-                String.format("Введите группу животного (доступные для ввода типы: %s)",
-                        userPresenter.getAllGroups())));
+                String.format("Введите группу животного (доступные для ввода группы: %s)", userPresenter.getAllGroups()),
+                userPresenter.getAllGroups(),
+                "Пожалуйста, введите группу из вышеуказанных",
+                false,
+                true));
     }
 
     public void editAnimalBirthday() {
         userPresenter.editAnimalBirthday(cachedId, cachedType, input.getString(
                 "Введите новую дату рождения в формате ГГГГ-ММ-ДД",
                 "^\\d{4}-\\d{2}-\\d{2}$",
-                "Пожалуйста, введите дату в вышеуказанном формате"));
+                "Пожалуйста, введите дату в вышеуказанном формате",
+                false));
     }
 
     public void updateAnimal() {
@@ -156,13 +169,32 @@ public class UserConsoleUI extends ConsoleUI {
                 "^[0-9]|[1-9](\\d+)?$",
                 "Ошибка ввода. Введите положительное число");
         cachedType = input.getString(
-                String.format("Введите вид животного (доступные для ввода типы: %s)", userPresenter.getAllTypes()));
+                String.format("Введите вид животного (доступные для ввода типы: %s)", userPresenter.getAllTypes()),
+                userPresenter.getAllTypes(),
+                "Пожалуйста, введите тип из вышеуказанных",
+                false,
+                true
+        );
         if (userPresenter.isExistsAnimal(cachedId, cachedType)) showMenu(currentMenu);
         else print("Не найдено ни одной записи о данном животном");
-        back();
+    }
+
+    public void showAllAnimals() {
+        previousMenu = currentMenu;
+        currentMenu = new ShowAllAnimalsMenu(this);
+        showMenu(currentMenu);
+    }
+
+    public void showAllAnimalsByBirthday() {
+        userPresenter.showAllAnimalsByBirthday();
+    }
+
+    public void showAllAnimalsByTypeName() {
+        userPresenter.showAllAnimalsByTypeName();
     }
 
     public void showAnimalCommands() {
         userPresenter.showAnimalCommands(cachedId, cachedType);
     }
+
 }
