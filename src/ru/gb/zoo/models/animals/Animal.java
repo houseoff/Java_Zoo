@@ -72,7 +72,7 @@ public class Animal {
 
     public Boolean addCommand(String command) {
 		command = command.trim().toLowerCase();
-        if (commands.get().contains(command))
+        if (commands.contains(command))
 			return false;
 		else {
 			commands.add(command);
@@ -82,7 +82,7 @@ public class Animal {
 
     public Boolean removeCommand(String command) {
         command = command.trim().toLowerCase();
-        if (commands.get().contains(command)) {
+        if (commands.contains(command)) {
             commands.remove(command);
             return true;
         }

@@ -19,10 +19,6 @@ public class Commands {
         }
     };
 
-    public List<String> get() {
-        return commands;
-    };
-
     public void add(String command) {
         commands.add(command);
     };
